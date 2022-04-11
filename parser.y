@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symbolTable.h"
+#include "symTab.h"
 int yylex(void);
 int yyerror(char *);
 %}
@@ -35,15 +35,17 @@ file:
 
 declarations:     DECLARE PREDICATE ID DD DIGIT { 
                     printf("PAR: Declare Predicate %s with %s\n", $<val>3, $<val>5);
-                    addSymbolEntry($<val>3, $<val>5, 1); 
+					// typ = Predicate = 0
+                    insert_right(actSymTable,$<val>3,0,(int)*($<val>5)); 
+					printList(actSymTable);
                   }
                 | DECLARE FUNCTION ID DD DIGIT { 
                     printf("PAR: Declare Function %s with %s\n", $<val>3, $<val>5);
-                    addSymbolEntry($<val>3, $<val>5, 0);
+                   // addSymbolEntry($<val>3, $<val>5, 0);
                   }
                 | DECLARE VARIABLE ID DD INT { 
                     printf("PAR: Declare Variable %s with int \n", $<val>3);
-                    addSymbolEntry($<val>3, $<val>5, 2);
+                    //addSymbolEntry($<val>3, $<val>5, 2);
                   }
                 ;
 

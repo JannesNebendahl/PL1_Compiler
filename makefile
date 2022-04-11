@@ -2,6 +2,7 @@ objects = parser.o scanner.o
 CC = gcc
 LEX = flex
 YACC = bison
+CFLAGS=-I.
 
 all: pl1c
 pl1c: $(objects)
@@ -14,3 +15,4 @@ scanner.c: scanner.l
 scanner.o : parser.h
 
 parser.h : parser.y
+
