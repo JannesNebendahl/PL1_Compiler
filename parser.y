@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symbolTable.h"
+#include "symTab.h"
 int yylex(void);
 int yyerror(char *);
+tableEntry symTab;
 %}
 
 %union {

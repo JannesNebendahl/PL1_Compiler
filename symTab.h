@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "syntree.h"
-#include "stack.h"
-#include "dict.h"
+//#include "syntree.h"
+//#include "stack.h"
+//#include "dict.h"
 
 
 // mögliche Typen in PL1
@@ -16,7 +16,7 @@ struct tableEntry{
 typedef struct tableEntry* tableEntry;
 
 
-tableEntry insert_right(tableEntry list, char* identifier, typ typ, int arity);
+tableEntry insert_right(tableEntry list, char* identifier, enum typ typ, int arity);
 
 tableEntry delete_right(tableEntry list);
 

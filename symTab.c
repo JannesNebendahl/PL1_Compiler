@@ -4,9 +4,9 @@
 #include<stdio.h>
 
 /*
-* Funktion um einen Eintrag rechts in der Liste einzufügen 
+* Funktion um einen Eintrag rechts in der Liste einzufï¿½gen 
 */
-tableEntry insert_right(tableEntry list, char *identifier, typ typ, int arity){
+tableEntry insert_right(tableEntry list, char *identifier, enum typ typ, int arity){
 	tableEntry new_tableEntry = (tableEntry) malloc(sizeof(struct list_tableEntry));
 	new_tableEntry->identifier = identifier;
 	new_tableEntry->typ = typ;
@@ -17,7 +17,7 @@ tableEntry insert_right(tableEntry list, char *identifier, typ typ, int arity){
 }
 
 /*
-* Funktion um einen Eintrag rechts von dem Eintrag list zu löschen
+* Funktion um einen Eintrag rechts von dem Eintrag list zu lï¿½schen
 */
 tableEntry delete_right(tableEntry list){
 	tableEntry tmp   = list->next;
@@ -27,7 +27,7 @@ tableEntry delete_right(tableEntry list){
 }
 
 /*
-* Löschen eines Eintrages ,mit Hilfe eines identifiers
+* Lï¿½schen eines Eintrages ,mit Hilfe eines identifiers
 * 
 */
 tableEntry delete(tableEntry entry, char *identifier) {
@@ -49,7 +49,7 @@ tableEntry delete(tableEntry entry, char *identifier) {
 		// wenn kein Eintrag gefunden werden kann
 		if (temp == NULL)
 			return;
-		// löschen des Eintrags
+		// lï¿½schen des Eintrags
 		previous->next = temp->next;
 		free(temp);
 	
@@ -71,7 +71,7 @@ void printList(tableEntry entry)
 
 /*
 * Funktion um einen Eintrag auf basis des Identifiers zu suchen
-* Zeiger geht die Liste durch, bis er den Eintrag findet oder auf NULL stößt
+* Zeiger geht die Liste durch, bis er den Eintrag findet oder auf NULL stï¿½ï¿½t
 */
 tableEntry search_for(tableEntry list, char *identifier) {
 	while (list != NULL) {
