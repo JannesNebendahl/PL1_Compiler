@@ -75,7 +75,7 @@
 #include "symTab.h"
 int yylex(void);
 int yyerror(char *);
-tableEntry symTab;
+struct tableEntry symTab;
 
 #line 81 "parser.c"
 
@@ -1134,7 +1134,7 @@ yyreduce:
 #line 37 "parser.y"
                                                 { 
                     printf("PAR: Declare Predicate %s with %s\n", (yyvsp[-2].val), (yyvsp[0].val));
-                    addSymbolEntry((yyvsp[-2].val), (yyvsp[0].val), 1); 
+                    //addSymbolEntry($<val>3, $<val>5, 1); 
                   }
 #line 1140 "parser.c"
     break;
@@ -1143,7 +1143,7 @@ yyreduce:
 #line 41 "parser.y"
                                                { 
                     printf("PAR: Declare Function %s with %s\n", (yyvsp[-2].val), (yyvsp[0].val));
-                    addSymbolEntry((yyvsp[-2].val), (yyvsp[0].val), 0);
+                    //addSymbolEntry($<val>3, $<val>5, 0);
                   }
 #line 1149 "parser.c"
     break;
@@ -1152,7 +1152,7 @@ yyreduce:
 #line 45 "parser.y"
                                              { 
                     printf("PAR: Declare Variable %s with int \n", (yyvsp[-2].val));
-                    addSymbolEntry((yyvsp[-2].val), (yyvsp[0].val), 2);
+                    //addSymbolEntry($<val>3, $<val>5, 2);
                   }
 #line 1158 "parser.c"
     break;

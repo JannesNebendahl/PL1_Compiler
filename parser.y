@@ -5,7 +5,7 @@
 #include "symTab.h"
 int yylex(void);
 int yyerror(char *);
-tableEntry symTab;
+struct tableEntry symTab;
 %}
 
 %union {
@@ -36,15 +36,15 @@ file:
 
 declarations:     DECLARE PREDICATE ID DD DIGIT { 
                     printf("PAR: Declare Predicate %s with %s\n", $<val>3, $<val>5);
-                    addSymbolEntry($<val>3, $<val>5, 1); 
+                    //addSymbolEntry($<val>3, $<val>5, 1); 
                   }
                 | DECLARE FUNCTION ID DD DIGIT { 
                     printf("PAR: Declare Function %s with %s\n", $<val>3, $<val>5);
-                    addSymbolEntry($<val>3, $<val>5, 0);
+                    //addSymbolEntry($<val>3, $<val>5, 0);
                   }
                 | DECLARE VARIABLE ID DD INT { 
                     printf("PAR: Declare Variable %s with int \n", $<val>3);
-                    addSymbolEntry($<val>3, $<val>5, 2);
+                    //addSymbolEntry($<val>3, $<val>5, 2);
                   }
                 ;
 
