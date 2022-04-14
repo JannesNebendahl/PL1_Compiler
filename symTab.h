@@ -14,20 +14,19 @@ struct tableEntry{
 typedef struct tableEntry* tableEntry;
 
 
-tableEntry insert_right(tableEntry list, char* identifier, typ typ, int arity);
+tableEntry insert_right( char* identifier, typ typ, int arity);
+void init();
 
+void delete_right();
 
-tableEntry delete_right(tableEntry list);
+void delete( char* identifier);
 
-tableEntry delete(tableEntry entry, char* identifier);
+void printList();
 
-void printList(tableEntry entry);
-
-tableEntry search_for(tableEntry list, char* identifier);
+tableEntry search_for( char* identifier);
 
 /*
 Globale Tabelle
 */
-tableEntry actSymTable;
 
 

@@ -1,8 +1,7 @@
-objects = parser.o scanner.o 
+objects = parser.o scanner.o symTab.o 
 CC = gcc
 LEX = flex
 YACC = bison
-CFLAGS=-I.
 
 all: pl1c
 pl1c: $(objects)
@@ -12,7 +11,7 @@ parser.c: parser.y
 scanner.c: scanner.l
 		$(LEX) -t $< > $@
 
-scanner.o : parser.h
-
-parser.h : parser.y
+scanner.o : parser.c
+parser.o : parser.h symTab.h
+symTab.o : symTab.h
 

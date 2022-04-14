@@ -5,6 +5,7 @@
 #include "symTab.h"
 int yylex(void);
 int yyerror(char *);
+void initialize();
 %}
 
 %union {
@@ -35,9 +36,10 @@ file:
 
 declarations:     DECLARE PREDICATE ID DD DIGIT { 
                     printf("PAR: Declare Predicate %s with %s\n", $<val>3, $<val>5);
+					init();
 					// typ = Predicate = 0
-                    insert_right(actSymTable,$<val>3,0,(int)*($<val>5)); 
-					printList(actSymTable);
+                     insert_right($<val>3,0,(int)*$<val>5); 
+					 printList();
                   }
                 | DECLARE FUNCTION ID DD DIGIT { 
                     printf("PAR: Declare Function %s with %s\n", $<val>3, $<val>5);
@@ -45,7 +47,7 @@ declarations:     DECLARE PREDICATE ID DD DIGIT {
                   }
                 | DECLARE VARIABLE ID DD INT { 
                     printf("PAR: Declare Variable %s with int \n", $<val>3);
-                    //addSymbolEntry($<val>3, $<val>5, 2);
+                    // addSymbolEntry($<val>3, $<val>5, 2);
                   }
                 ;
 
@@ -70,9 +72,13 @@ term:     {printf("PAR: kein Argument\n");}
         ;
 
 %%
+
 int yyerror(char *s){
     printf("%s\n", s);
     exit(1);
+}
+void initialize(){
+	init();
 }
 
 

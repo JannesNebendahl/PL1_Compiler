@@ -3,44 +3,46 @@
 #include <string.h>
 #include<stdio.h>
 
+tableEntry actSymTable;
 
-	actSymTable = malloc(sizeof(struct tableEntry));
-	
-
+void init() { 
+	printf("init---------------");
+	actSymTable= (tableEntry) malloc(sizeof(struct tableEntry));
+}
 /*
 * Funktion um einen Eintrag rechts in der Liste einzuf�gen 
 */
-tableEntry insert_right(tableEntry list, char *identifier, typ typ, int arity){
-	tableEntry new_tableEntry = (tableEntry) malloc(sizeof(struct list_tableEntry));
+tableEntry insert_right(char *identifier, typ typ, int arity){
+	tableEntry new_tableEntry = (tableEntry) malloc(sizeof(struct tableEntry));
 	new_tableEntry->identifier = identifier;
 	new_tableEntry->typ = typ;
 	new_tableEntry->arity = arity;
-	new_tableEntry->next = list->next;
-	list->next     = new_tableEntry;
+	new_tableEntry->next = actSymTable->next;
+	actSymTable->next     = new_tableEntry;
 	return new_tableEntry;
 }
 
 /*
 * Funktion um einen Eintrag rechts von dem Eintrag list zu l�schen
 */
-tableEntry delete_right(tableEntry list){
-	tableEntry tmp   = list->next;
-	list->next = list->next->next;
+void delete_right(){
+	tableEntry tmp   = actSymTable->next;
+	actSymTable->next = actSymTable->next->next;
 	free(tmp);
-	return list;
+	
 }
 
 /*
 * L�schen eines Eintrages ,mit Hilfe eines identifiers
 * 
 */
-tableEntry delete(tableEntry entry, char *identifier) {
+void delete( char *identifier) {
 
-	tableEntry temp = entry, previous;
+	tableEntry temp = actSymTable, previous;
 	
 		// wenn der erste Eintrag der richtige ist 
 		if (temp != NULL && temp->identifier == identifier) {
-			entry = temp->next;
+			actSymTable = temp->next;
 			free(temp);
 			return;
 		}
@@ -60,16 +62,16 @@ tableEntry delete(tableEntry entry, char *identifier) {
 }
 
 
-void printList(tableEntry entry)
+void printList()
 {
 	char const* typen[] = { "Predicate", "Function", "Variable"};
 
-	while (entry != NULL) {
-		printf(" %c \n ", entry->identifier);
-		printf(" %s \n ", entry->typ);
-		printf(" %s \n ", typen[entry->identifier]);
-		printf(" %d \n ", entry->arity);
-		entry = entry->next;
+	while (actSymTable != NULL) {
+		printf(" %c \n ", actSymTable->identifier);
+		printf(" %s \n ", actSymTable->typ);
+		printf(" %s \n ", typen[actSymTable->typ]);
+		printf(" %d \n ", actSymTable->arity);
+		actSymTable = actSymTable->next;
 	}
 }
 
@@ -77,11 +79,11 @@ void printList(tableEntry entry)
 * Funktion um einen Eintrag auf basis des Identifiers zu suchen
 * Zeiger geht die Liste durch, bis er den Eintrag findet oder auf NULL st��t
 */
-tableEntry search_for(tableEntry list, char *identifier) {
-	while (list != NULL) {
-		if (list->identifier == identifier)
-			return list;
-		list = list->next;
+tableEntry search_for(char *identifier) {
+	while (actSymTable != NULL) {
+		if (actSymTable->identifier == identifier)
+			return actSymTable;
+		actSymTable = actSymTable->next;
 	}
 	return NULL;
 }
