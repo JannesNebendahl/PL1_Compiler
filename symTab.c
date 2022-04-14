@@ -93,7 +93,7 @@ void printList()
 	int index = 1;
 	tableEntry temp = actSymTable;
 	temp = temp->next;
-	while (temp->next != NULL) {
+	while (temp != NULL) {
 		printf("\n----%d----\n", index);
 		printf("ID: %s \n", temp->identifier);
 		// printf(" %s \n ", actSymTable->typ);
