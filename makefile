@@ -1,4 +1,4 @@
-objects = parser.o scanner.o symTab.o 
+objects = parser.o scanner.o symTab.o error.o
 CC = gcc
 LEX = flex
 YACC = bison
@@ -11,7 +11,6 @@ parser.c: parser.y
 scanner.c: scanner.l
 		$(LEX) -t $< > $@
 
-scanner.o : parser.c
-parser.o : parser.h symTab.h
-symTab.o : symTab.h
-
+scanner.o : parser.c symTab.h error.h
+parser.o : parser.h symTab.h error.h
+symTab.o : symTab.h error.h

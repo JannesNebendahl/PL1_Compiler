@@ -3,16 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symTab.h"
+#include "error.h"
 int yylex(void);
 int yyerror(char *);
 void initialize();
 %}
-
 %union {
     char val [101];
     int regno;
 }
-
 %left   EQUIVALENT
 %left   IMPLICATION
 %left   OR
@@ -36,18 +35,16 @@ file:
 
 declarations:     DECLARE PREDICATE ID DD DIGIT { 
                     printf("PAR: Declare Predicate %s with %s\n", $<val>3, $<val>5);
-					init();
-					// typ = Predicate = 0
-                     insert_right($<val>3,0,(int)*$<val>5); 
-					 printList();
+					checkListe();
+					 insert_right(&($<val>3),0,&($<val>5)); 
                   }
                 | DECLARE FUNCTION ID DD DIGIT { 
                     printf("PAR: Declare Function %s with %s\n", $<val>3, $<val>5);
-                   // addSymbolEntry($<val>3, $<val>5, 0);
+					 insert_right(&($<val>3),1,&($<val>5)); 
                   }
                 | DECLARE VARIABLE ID DD INT { 
                     printf("PAR: Declare Variable %s with int \n", $<val>3);
-                    // addSymbolEntry($<val>3, $<val>5, 2);
+					 insert_right(&($<val>3),2,"int"); 
                   }
                 ;
 
@@ -73,17 +70,15 @@ term:     {printf("PAR: kein Argument\n");}
 
 %%
 
-int yyerror(char *s){
+
+/* int yyerror(char *s){
     printf("%s\n", s);
     exit(1);
 }
-void initialize(){
-	init();
-}
+ */
 
-
-
-// KOMENTAR AN MICH: 
-// Wieso hört der Parser nach dem Declarations Abschnitt auf?
-// Um nur die Parser Printfs auszugeben wie folgt starten:  ./pl1c BEISPIELE/complex_in.pl1 | grep PAR
-
+// int main(void)
+//  {
+// 	// init();
+//  	return yyparse();
+//  } 

@@ -3,25 +3,49 @@
 #include <string.h>
 #include<stdio.h>
 
+int initialized;
 tableEntry actSymTable;
 
 void init() { 
-	printf("init---------------");
-	actSymTable= (tableEntry) malloc(sizeof(struct tableEntry));
+	printf("\n------------initialize table ----------\n");
+	
 }
 /*
 * Funktion um einen Eintrag rechts in der Liste einzuf�gen 
 */
-tableEntry insert_right(char *identifier, typ typ, int arity){
-	tableEntry new_tableEntry = (tableEntry) malloc(sizeof(struct tableEntry));
+tableEntry insert_right(char *identifier, typ typ, char *arity){
+	printf("SYM: Inserting %s into the symboltable with arity %s\n",identifier, arity);
+	tableEntry temp = actSymTable;
+	while (temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	tableEntry new_tableEntry;
+	new_tableEntry = (tableEntry_struct *) malloc(sizeof(struct tableEntry_struct));
 	new_tableEntry->identifier = identifier;
+	printf("new_tableEntry->identifier: %s\n", new_tableEntry->identifier);
 	new_tableEntry->typ = typ;
+	printf("new_tableEntry->typ: %d\n", new_tableEntry->typ);
 	new_tableEntry->arity = arity;
-	new_tableEntry->next = actSymTable->next;
-	actSymTable->next     = new_tableEntry;
+	printf("new_tableEntry->arity: %s\n", new_tableEntry->arity);
+	new_tableEntry->next = NULL;
+	temp->next = new_tableEntry;
+	printList();
 	return new_tableEntry;
 }
+void checkListe()
+{
+	if (initialized != 1)
+	{
+		printf("\n------------initializing symboltable----------\n");
+		actSymTable = malloc(sizeof(struct tableEntry_struct));
+		actSymTable->next = NULL;
+		initialized = 1;
+	}
+	else{
 
+	}
+} 
 /*
 * Funktion um einen Eintrag rechts von dem Eintrag list zu l�schen
 */
@@ -33,7 +57,7 @@ void delete_right(){
 }
 
 /*
-* L�schen eines Eintrages ,mit Hilfe eines identifiers
+* Löschen eines Eintrages ,mit Hilfe eines identifiers
 * 
 */
 void delete( char *identifier) {
@@ -64,15 +88,23 @@ void delete( char *identifier) {
 
 void printList()
 {
+	printf("\n------Actual symboltable-------:\n", index);
 	char const* typen[] = { "Predicate", "Function", "Variable"};
-
-	while (actSymTable != NULL) {
-		printf(" %c \n ", actSymTable->identifier);
-		printf(" %s \n ", actSymTable->typ);
-		printf(" %s \n ", typen[actSymTable->typ]);
-		printf(" %d \n ", actSymTable->arity);
-		actSymTable = actSymTable->next;
+	int index = 1;
+	tableEntry temp = actSymTable;
+	temp = temp->next;
+	while (temp->next != NULL) {
+		printf("\n----%d----\n", index);
+		printf("ID: %s \n", temp->identifier);
+		// printf(" %s \n ", actSymTable->typ);
+		printf("Typ: %s \n", typen[temp->typ]);
+		printf("Arity: %s \n", temp->arity);
+		index++;
+		temp = temp->next;
 	}
+	
+	printf("\n-----------------------------\n", index);
+
 }
 
 /*

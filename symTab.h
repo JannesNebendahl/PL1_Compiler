@@ -5,28 +5,26 @@
 enum typ{Predicate, Function, Variable};
 typedef enum typ typ;
 // datentyp eines Symboltabelleneintrags
-struct tableEntry{
+struct tableEntry_struct{
 	char *identifier;
 	typ typ;
-	int arity;
-	struct tableEntry *next; // Zeiger auf nächstes Element
+	char *arity;
+	struct tableEntry_struct *next; // Zeiger auf nächstes Element
 };
-typedef struct tableEntry* tableEntry;
-
-
-tableEntry insert_right( char* identifier, typ typ, int arity);
-void init();
+typedef struct tableEntry_struct* tableEntry;
+tableEntry insert_right(char *identifier, typ typ, char *arity);
+	void init();
 
 void delete_right();
 
-void delete( char* identifier);
+void delete(char* identifier);
 
 void printList();
+void checkListe();
 
 tableEntry search_for( char* identifier);
 
 /*
 Globale Tabelle
 */
-
 
