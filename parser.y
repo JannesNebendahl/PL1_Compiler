@@ -5,7 +5,6 @@
 #include "symTab.h"
 #include "error.h"
 int yylex(void);
-int yyerror(char *);
 void initialize();
 %}
 %union {
@@ -45,6 +44,7 @@ declarations:     DECLARE PREDICATE ID DD DIGIT {
                 | DECLARE VARIABLE ID DD INT { 
                     printf("PAR: Declare Variable %s with int \n", $<val>3);
 					 insert_right(&($<val>3),2,"int"); 
+					 printList();
                   }
                 ;
 

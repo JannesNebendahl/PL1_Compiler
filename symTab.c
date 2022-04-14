@@ -4,7 +4,7 @@
 #include<stdio.h>
 
 int initialized;
-tableEntry actSymTable;
+ tableEntry actSymTable;
 
 void init() { 
 	printf("\n------------initialize table ----------\n");
@@ -28,9 +28,8 @@ tableEntry insert_right(char *identifier, typ typ, char *arity){
 	printf("new_tableEntry->typ: %d\n", new_tableEntry->typ);
 	new_tableEntry->arity = arity;
 	printf("new_tableEntry->arity: %s\n", new_tableEntry->arity);
-	new_tableEntry->next = NULL;
+	new_tableEntry->next = temp->next;
 	temp->next = new_tableEntry;
-	printList();
 	return new_tableEntry;
 }
 void checkListe()
@@ -88,7 +87,7 @@ void delete( char *identifier) {
 
 void printList()
 {
-	printf("\n------Actual symboltable-------:\n", index);
+	printf("\n------Actual symboltable-------:\n");
 	char const* typen[] = { "Predicate", "Function", "Variable"};
 	int index = 1;
 	tableEntry temp = actSymTable;
