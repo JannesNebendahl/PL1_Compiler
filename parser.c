@@ -75,7 +75,7 @@
 #include "symTab.h"
 int yylex(void);
 int yyerror(char *);
-struct tableEntry symTab;
+tableEntry symTab;
 
 #line 81 "parser.c"
 
@@ -524,9 +524,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    32,    32,    33,    34,    37,    41,    45,    51,    52,
-      53,    54,    55,    56,    57,    58,    59,    60,    61,    64,
-      65,    66,    67,    68
+       0,    32,    32,    33,    34,    37,    42,    45,    50,    51,
+      52,    53,    54,    55,    56,    57,    58,    59,    60,    63,
+      64,    65,    66,    67
 };
 #endif
 
@@ -1134,16 +1134,16 @@ yyreduce:
 #line 37 "parser.y"
                                                 { 
                     printf("PAR: Declare Predicate %s with %s\n", (yyvsp[-2].val), (yyvsp[0].val));
-                    //addSymbolEntry($<val>3, $<val>5, 1); 
+                    symTab = insert_right(symTab, (yyvsp[-2].val), 0, 0); // wo bekomme ich die Stelligkeit her?
+                    printList(symTab);
                   }
-#line 1140 "parser.c"
+#line 1141 "parser.c"
     break;
 
   case 6: /* declarations: DECLARE FUNCTION ID DD DIGIT  */
-#line 41 "parser.y"
+#line 42 "parser.y"
                                                { 
                     printf("PAR: Declare Function %s with %s\n", (yyvsp[-2].val), (yyvsp[0].val));
-                    //addSymbolEntry($<val>3, $<val>5, 0);
                   }
 #line 1149 "parser.c"
     break;
@@ -1152,109 +1152,108 @@ yyreduce:
 #line 45 "parser.y"
                                              { 
                     printf("PAR: Declare Variable %s with int \n", (yyvsp[-2].val));
-                    //addSymbolEntry($<val>3, $<val>5, 2);
                   }
-#line 1158 "parser.c"
+#line 1157 "parser.c"
     break;
 
   case 8: /* formula: ID R_B_O term R_B_C  */
-#line 51 "parser.y"
+#line 50 "parser.y"
                                   { printf("PAR: %s\n", (yyvsp[-3].val)); }
-#line 1164 "parser.c"
+#line 1163 "parser.c"
     break;
 
   case 9: /* formula: TRUE  */
-#line 52 "parser.y"
+#line 51 "parser.y"
                    { printf("PAR: True\n"); }
-#line 1170 "parser.c"
+#line 1169 "parser.c"
     break;
 
   case 10: /* formula: FALSE  */
-#line 53 "parser.y"
+#line 52 "parser.y"
                     { printf("PAR: False\n"); }
-#line 1176 "parser.c"
+#line 1175 "parser.c"
     break;
 
   case 11: /* formula: R_B_O formula R_B_C  */
-#line 54 "parser.y"
+#line 53 "parser.y"
                                   { printf("PAR: ( )\n"); }
-#line 1182 "parser.c"
+#line 1181 "parser.c"
     break;
 
   case 12: /* formula: NOT formula  */
-#line 55 "parser.y"
+#line 54 "parser.y"
                           { printf("PAR: ~\n"); }
-#line 1188 "parser.c"
+#line 1187 "parser.c"
     break;
 
   case 13: /* formula: formula AND formula  */
-#line 56 "parser.y"
+#line 55 "parser.y"
                                   { printf("PAR: AND\n"); }
-#line 1194 "parser.c"
+#line 1193 "parser.c"
     break;
 
   case 14: /* formula: formula OR formula  */
-#line 57 "parser.y"
+#line 56 "parser.y"
                                  { printf("PAR: OR\n"); }
-#line 1200 "parser.c"
+#line 1199 "parser.c"
     break;
 
   case 15: /* formula: formula EQUIVALENT formula  */
-#line 58 "parser.y"
+#line 57 "parser.y"
                                          { printf("PAR: EQUIVALENT\n"); }
-#line 1206 "parser.c"
+#line 1205 "parser.c"
     break;
 
   case 16: /* formula: formula IMPLICATION formula  */
-#line 59 "parser.y"
+#line 58 "parser.y"
                                           { printf("PAR: IMPLICATION\n"); }
-#line 1212 "parser.c"
+#line 1211 "parser.c"
     break;
 
   case 17: /* formula: ALL B_O ID B_C formula  */
-#line 60 "parser.y"
+#line 59 "parser.y"
                                      { printf("PAR: ALL[%s]\n", (yyvsp[-2].val)); }
-#line 1218 "parser.c"
+#line 1217 "parser.c"
     break;
 
   case 18: /* formula: EXIST B_O ID B_C formula  */
-#line 61 "parser.y"
+#line 60 "parser.y"
                                        { printf("PAR: EXIST[%s]\n", (yyvsp[-2].val)); }
-#line 1224 "parser.c"
+#line 1223 "parser.c"
     break;
 
   case 19: /* term: %empty  */
-#line 64 "parser.y"
+#line 63 "parser.y"
           {printf("PAR: kein Argument\n");}
-#line 1230 "parser.c"
+#line 1229 "parser.c"
     break;
 
   case 20: /* term: ID  */
-#line 65 "parser.y"
+#line 64 "parser.y"
                   {strcpy((yyval.val),(yyvsp[0].val)); printf("PAR: %s\n", (yyvsp[0].val));}
-#line 1236 "parser.c"
+#line 1235 "parser.c"
     break;
 
   case 21: /* term: DIGIT  */
-#line 66 "parser.y"
+#line 65 "parser.y"
                   {strcpy((yyval.val),(yyvsp[0].val)); printf("PAR: %s\n", (yyvsp[0].val));}
-#line 1242 "parser.c"
+#line 1241 "parser.c"
     break;
 
   case 22: /* term: ID R_B_O term R_B_C  */
-#line 67 "parser.y"
+#line 66 "parser.y"
                               { printf("PAR: %s( )\n", (yyvsp[-3].val)); }
-#line 1248 "parser.c"
+#line 1247 "parser.c"
     break;
 
   case 23: /* term: term COMMA term  */
-#line 68 "parser.y"
+#line 67 "parser.y"
                           { printf("PAR: ,\n"); }
-#line 1254 "parser.c"
+#line 1253 "parser.c"
     break;
 
 
-#line 1258 "parser.c"
+#line 1257 "parser.c"
 
       default: break;
     }
@@ -1447,7 +1446,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 71 "parser.y"
+#line 70 "parser.y"
 
 int yyerror(char *s){
     printf("%s\n", s);
