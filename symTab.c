@@ -21,7 +21,7 @@ tableEntry insert_right(char *identifier, typ typ, char *arity){
 		temp = temp->next;
 	}
 	tableEntry new_tableEntry;
-	new_tableEntry = (tableEntry_struct *) malloc(sizeof(struct tableEntry_struct));
+	new_tableEntry = (tableEntry) malloc(sizeof(struct tableEntry_struct));
 	new_tableEntry->identifier = identifier;
 	printf("new_tableEntry->identifier: %s\n", new_tableEntry->identifier);
 	new_tableEntry->typ = typ;
