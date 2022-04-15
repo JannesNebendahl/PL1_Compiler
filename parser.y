@@ -35,15 +35,17 @@ file:
 declarations:     DECLARE PREDICATE ID DD DIGIT { 
                     printf("PAR: Declare Predicate %s with %s\n", $<val>3, $<val>5);
 					checkListe();
-					 insert_right(&($<val>3),0,&($<val>5)); 
+                    char* val1 = $<val>3;
+                    char* val2 = $<val>5;
+					 insert_right(val1,0,val2); 
                   }
                 | DECLARE FUNCTION ID DD DIGIT { 
                     printf("PAR: Declare Function %s with %s\n", $<val>3, $<val>5);
-					 insert_right(&($<val>3),1,&($<val>5)); 
+					 insert_right($<val>3,1,$<val>5); 
                   }
                 | DECLARE VARIABLE ID DD INT { 
                     printf("PAR: Declare Variable %s with int \n", $<val>3);
-					 insert_right(&($<val>3),2,"int"); 
+					 insert_right($<val>3,2,"int"); 
 					 printList();
                   }
                 ;

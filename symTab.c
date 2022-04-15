@@ -4,22 +4,32 @@
 #include<stdio.h>
 
 int initialized;
- tableEntry actSymTable;
+tableEntry actSymTable;
+int firstEntry = 0;
 
 void init() { 
 	printf("\n------------initialize table ----------\n");
 	
 }
-/*
-* Funktion um einen Eintrag rechts in der Liste einzuf�gen 
-*/
+/**
+ * @brief Function to insert a new entry into the list
+ * 
+ * @param identifier ID 
+ * @param typ 
+ * @param arity 
+ * @return tableEntry the new TableENtry
+ */
 tableEntry insert_right(char *identifier, typ typ, char *arity){
 	printf("SYM: Inserting %s into the symboltable with arity %s\n",identifier, arity);
 	tableEntry temp = actSymTable;
+	// finding the last entry
 	while (temp->next != NULL)
 	{
+		printf("-->s");
 		temp = temp->next;
 	}
+	printf("\n");
+
 	tableEntry new_tableEntry;
 	new_tableEntry = (tableEntry) malloc(sizeof(struct tableEntry_struct));
 	new_tableEntry->identifier = identifier;
@@ -28,10 +38,26 @@ tableEntry insert_right(char *identifier, typ typ, char *arity){
 	printf("new_tableEntry->typ: %d\n", new_tableEntry->typ);
 	new_tableEntry->arity = arity;
 	printf("new_tableEntry->arity: %s\n", new_tableEntry->arity);
-	new_tableEntry->next = temp->next;
-	temp->next = new_tableEntry;
+	new_tableEntry->next = NULL;
+	// Initializing actSymTable with the first entry
+	if (firstEntry==1){
+		actSymTable = new_tableEntry;
+		printf("\nInitializing actSymTable->identifier: %s\n", actSymTable->identifier);
+		firstEntry = 0;
+	}
+	// appending
+	else{
+		temp->next = new_tableEntry;
+		printf("\nWhen actSymTable should not be changed: actSymTable->identifier: %s\n", actSymTable->identifier);
+
+	}
 	return new_tableEntry;
 }
+
+/**
+ * @brief function to check if the table has been initialized and if not, initialize it
+ * 
+ */
 void checkListe()
 {
 	if (initialized != 1)
@@ -40,14 +66,17 @@ void checkListe()
 		actSymTable = malloc(sizeof(struct tableEntry_struct));
 		actSymTable->next = NULL;
 		initialized = 1;
+		firstEntry = 1;
 	}
 	else{
 
 	}
 } 
-/*
-* Funktion um einen Eintrag rechts von dem Eintrag list zu l�schen
-*/
+/**
+ * @brief funciton to delete an entry
+ * NOT USED
+ * 
+ */
 void delete_right(){
 	tableEntry tmp   = actSymTable->next;
 	actSymTable->next = actSymTable->next->next;
@@ -55,10 +84,10 @@ void delete_right(){
 	
 }
 
-/*
-* Löschen eines Eintrages ,mit Hilfe eines identifiers
-* 
-*/
+/**
+ * @brief deleting an entry with help of an identifier
+ * NOT USED
+ */
 void delete( char *identifier) {
 
 	tableEntry temp = actSymTable, previous;
@@ -84,7 +113,10 @@ void delete( char *identifier) {
 	
 }
 
-
+/**
+ * @brief Function to print the table
+ * 
+ */
 void printList()
 {
 	printf("\n------Actual symboltable-------:\n");
@@ -106,10 +138,13 @@ void printList()
 
 }
 
-/*
-* Funktion um einen Eintrag auf basis des Identifiers zu suchen
-* Zeiger geht die Liste durch, bis er den Eintrag findet oder auf NULL st��t
+/**
+ * @brief  Funktion um einen Eintrag auf basis des Identifiers zu suchen
+* Zeiger geht die Liste durch, bis er den Eintrag findet oder auf NULL steht
+* NOT USED
 */
+
+
 tableEntry search_for(char *identifier) {
 	while (actSymTable != NULL) {
 		if (actSymTable->identifier == identifier)
