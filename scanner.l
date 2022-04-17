@@ -102,7 +102,7 @@ ID [a-zA-Z][a-zA-Z0-9_]*
 }  
 [0-9]+ {
   printf("LEX: Digit: %s\n", yytext );
-  strcpy(yylval.val,yytext);
+  yylval.number = atoi( yytext );
   return DIGIT;
 }
 [ \t\n\r] {

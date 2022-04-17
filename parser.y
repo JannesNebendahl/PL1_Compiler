@@ -9,6 +9,7 @@ void initialize();
 %}
 %union {
     char val [101];
+	int number;
     int regno;
 }
 %left   EQUIVALENT
@@ -33,20 +34,20 @@ file:
         ;
 
 declarations:     DECLARE PREDICATE ID DD DIGIT { 
-                    printf("PAR: Declare Predicate %s with %s\n", $<val>3, $<val>5);
-					checkListe();
+                    printf("PAR: Declare Predicate %s with %d\n", $<val>3, $<number>5);
                     char* val1 = $<val>3;
-                    char* val2 = $<val>5;
-					 insert_right(val1,0,val2); 
+                    int val2 = $<number>5;
+					insert_right(val1,0,val2); 
+					 printList();
                   }
                 | DECLARE FUNCTION ID DD DIGIT { 
-                    printf("PAR: Declare Function %s with %s\n", $<val>3, $<val>5);
-					 insert_right($<val>3,1,$<val>5); 
+                    printf("PAR: Declare Function %s with %d\n", $<val>3, $<number>5);
+					 insert_right($<val>3,1,$<number>5); 
                   }
                 | DECLARE VARIABLE ID DD INT { 
                     printf("PAR: Declare Variable %s with int \n", $<val>3);
-					 insert_right($<val>3,2,"int"); 
-					 printList();
+					// what airity does "int" mean??
+					 insert_right($<val>3,2,10); 
                   }
                 ;
 
