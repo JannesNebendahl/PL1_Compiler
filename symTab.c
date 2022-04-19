@@ -1,10 +1,8 @@
 #include "symTab.h"
 #include <stdlib.h>
-#include <regex.h> 
-#include <locale.h>
 #include <string.h>
 #include <stdio.h>
-
+#include "synTree.h"
 int initialized;
 tableEntry actSymTable = NULL;
 
@@ -20,8 +18,10 @@ void init()
  * @param arity
  * @return tableEntry the new TableENtry
  */
-tableEntry insert_right(char identifier[], typ typ, int arity)
+tableEntry insert_right(char identifier[], typ typ, int arity, enum var_type type)
 {
+	// check auf redundante definition
+	if(search_for(identifier) == NULL){
 	printf("SYM: Inserting %s into the symboltable with arity %d\n", identifier, arity);
 	tableEntry new_tableEntry;
 	new_tableEntry = (tableEntry)malloc(sizeof(struct tableEntry_struct));
@@ -36,8 +36,6 @@ tableEntry insert_right(char identifier[], typ typ, int arity)
 		printf("\n------------initializing symboltable----------\n");
 		actSymTable = new_tableEntry;
 	}
-
-
 	// appending
 	else
 	{
@@ -53,43 +51,12 @@ tableEntry insert_right(char identifier[], typ typ, int arity)
 	}
 	return new_tableEntry;
 }
-
-int check_Typ(typ Typ, char *identifier){
-	//enum typ{Predicate, Function, Variable};
-	 regex_t    preg;                                                            
-    char       *string = identifier;                                     
-    char       *function_pattern = "[a-z]";  
-    char       *predicate_pattern = "[A-Z][1-99]";                                       
-    char       *var_pattern = "[a-z]";                                                          
-    int        rc;
-
-	switch(typ){
-		//Predicate:
-		case 0:
-			if ((rc = regcomp(&preg, predicate_pattern, REG_EXTENDED)) != 0) {                    
-				printf("Predicate Syntax error: %d", rc);                  
-				exit(1);
-				break;
-		//Funciton:
-		case 1:
-			if ((rc = regcomp(&preg, function_pattern, REG_EXTENDED)) != 0) {                    
-					printf("Function Syntax error: %d", rc);                  
-					exit(1);  
-					break;
-		//Variable
-		case 1:
-			if ((rc = regcomp(&preg, variable_pattern, REG_EXTENDED)) != 0) {                    
-					printf("Variable Syntax error: %d", rc);                  
-					exit(1);  
-					break;
-		default:
-			printf("Error while checking syntax of type");                  
-			break;
-		
-	}
-	                                                               
-    } 
+else{
+	printf("ID already exists!");
 }
+}
+
+
 
 /**
  * @brief funciton to delete an entry
@@ -165,7 +132,7 @@ void printList()
  * Zeiger geht die Liste durch, bis er den Eintrag findet oder auf NULL steht
  */
 
-tableEntry search_for(char *identifier)
+tableEntry search_for(char identifier[])
 {
 	tableEntry temp = actSymTable;
 	while (temp != NULL)

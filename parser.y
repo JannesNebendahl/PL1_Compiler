@@ -4,6 +4,7 @@
 #include <string.h>
 #include "symTab.h"
 #include "error.h"
+#include "synTree.h"
 int yylex(void);
 void initialize();
 %}
@@ -37,27 +38,38 @@ declarations:     DECLARE PREDICATE ID DD DIGIT {
                     printf("PAR: Declare Predicate %s with %d\n", $<val>3, $<number>5);
                     char* val1 = $<val>3;
                     int val2 = $<number>5;
-					insert_right(val1,0,val2); 
+					insert_right(val1,Predicate,val2,NoType); 
 					 printList();
                   }
                 | DECLARE FUNCTION ID DD DIGIT { 
                     printf("PAR: Declare Function %s with %d\n", $<val>3, $<number>5);
-					 insert_right($<val>3,1,$<number>5); 
+					 insert_right($<val>3,Function,$<number>5,NoType);   
+                    printList();
+
                   }
+
                 | DECLARE VARIABLE ID DD INT { 
                     printf("PAR: Declare Variable %s with int \n", $<val>3);
-					// what airity does "int" mean??
-					 insert_right($<val>3,2,10); 
+					 insert_right($<val>3,Variable,0,Int); 
+                    printList();
                   }
                 ;
 
-formula:      ID R_B_O term R_B_C { printf("PAR: %s\n", $<val>1); }
-            | TRUE { printf("PAR: True\n"); }
+formula:      ID R_B_O term R_B_C { 
+                    printf("PAR: %s\n", $<val>1); 
+                     //check auf Predicate -> symboltable
+                    }
+            | TRUE { 
+				printf("PAR: True\n"); 
+				//makeTrueNode()}
             | FALSE { printf("PAR: False\n"); }
             | R_B_O formula R_B_C { printf("PAR: ( )\n"); }
             | NOT formula { printf("PAR: ~\n"); }
             | formula AND formula { printf("PAR: AND\n"); }
-            | formula OR formula { printf("PAR: OR\n"); }
+            | formula OR formula { 
+				printf("PAR: OR\n"); 
+				// make disjunktionnodde()
+				}
             | formula EQUIVALENT formula { printf("PAR: EQUIVALENT\n"); }
             | formula IMPLICATION formula { printf("PAR: IMPLICATION\n"); }
             | ALL B_O ID B_C formula { printf("PAR: ALL[%s]\n", $<val>3); }
