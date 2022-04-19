@@ -8,7 +8,7 @@ typedef enum typ typ;
 struct tableEntry_struct{
 	char identifier[MAX];
 	typ typ;
-	int arity;
+	int arity;//= Anz. der Argumente
 	struct tableEntry_struct *next; // Zeiger auf nächstes Element
 };
 typedef struct tableEntry_struct* tableEntry;

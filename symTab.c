@@ -1,5 +1,7 @@
 #include "symTab.h"
 #include <stdlib.h>
+#include <regex.h> 
+#include <locale.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -52,6 +54,42 @@ tableEntry insert_right(char identifier[], typ typ, int arity)
 	return new_tableEntry;
 }
 
+int check_Typ(typ Typ, char *identifier){
+	//enum typ{Predicate, Function, Variable};
+	 regex_t    preg;                                                            
+    char       *string = identifier;                                     
+    char       *function_pattern = "[a-z]";  
+    char       *predicate_pattern = "[A-Z][1-99]";                                       
+    char       *var_pattern = "[a-z]";                                                          
+    int        rc;
+
+	switch(typ){
+		//Predicate:
+		case 0:
+			if ((rc = regcomp(&preg, predicate_pattern, REG_EXTENDED)) != 0) {                    
+				printf("Predicate Syntax error: %d", rc);                  
+				exit(1);
+				break;
+		//Funciton:
+		case 1:
+			if ((rc = regcomp(&preg, function_pattern, REG_EXTENDED)) != 0) {                    
+					printf("Function Syntax error: %d", rc);                  
+					exit(1);  
+					break;
+		//Variable
+		case 1:
+			if ((rc = regcomp(&preg, variable_pattern, REG_EXTENDED)) != 0) {                    
+					printf("Variable Syntax error: %d", rc);                  
+					exit(1);  
+					break;
+		default:
+			printf("Error while checking syntax of type");                  
+			break;
+		
+	}
+	                                                               
+    } 
+}
 
 /**
  * @brief funciton to delete an entry
