@@ -1,4 +1,6 @@
 #include "symTab.h"
+#include <stdbool.h>
+
 typedef enum nodeT{all_node, exist_node, and_node, or_node, negation, predicate, func, variable,true_node, false_node, num, arg};
 struct node
 {
@@ -30,13 +32,13 @@ struct node
 		// 
         bool True;
         bool False;
-		struct number{ 
-		int number;
-		}number_struct;
+        struct number{
+            int number;
+        };
         struct argument { 
             struct node* argument;
             struct node* next;
-        }argument_struct;
+        };
     };
     
 };
