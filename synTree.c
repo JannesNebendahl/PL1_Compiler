@@ -54,3 +54,39 @@ struct node* makeDisjunctionNode(struct node* formula_left_node, struct node* fo
 	new_node->formula_right = formula_right_node;
 
 }
+
+struct node* makeNegationNode(struct node* formula_node){
+	struct node* new_node = malloc(sizeof(struct node));
+	new_node->nodeType = negation;
+	new_node->formula = formula_node;
+}
+
+struct node* makePredicateNode(struct node* argument_node){
+	struct node* new_node = malloc(sizeof(struct node));
+	new_node->nodeType = predicate;
+	new_node->argument = argument_node;
+}
+
+struct node* makeFunctionNode(struct node* argument_node){
+	struct node* new_node = malloc(sizeof(struct node));
+	new_node->nodeType = func;
+	new_node->argument = argument_node;
+}
+
+struct node* makeVariableNode(){
+	struct node* new_node = malloc(sizeof(struct node));
+	new_node->nodeType = variable;
+}
+
+struct node* makeNumNode(int num_value){
+	struct node* new_node = malloc(sizeof(struct node));
+	new_node->nodeType = num;
+	new_node->number = num_value;
+}
+
+struct node* makeArgumentNode(struct node* argument_node, struct node* next_node){
+	struct node* new_node = malloc(sizeof(struct node));
+	new_node->nodeType = arg;
+	new_node->argument = argument_node;
+	new_node->next = next_node;
+}
