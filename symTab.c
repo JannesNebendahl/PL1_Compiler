@@ -18,7 +18,7 @@ void init()
  * @param arity
  * @return tableEntry the new TableENtry
  */
-tableEntry insert_right(char identifier[], typ typ, int arity, enum var_type type)
+tableEntry insert_right(char identifier[], typ typ, int arity, var_type type)
 {
 	// check auf redundante definition
 	if(search_for(identifier) == NULL){
@@ -55,8 +55,49 @@ else{
 	printf("ID already exists!");
 }
 }
+/**
+ * @brief Function to check, if Symboltable-Entry is of type Predicate
+ * 
+ * @param identifier 
+ * @return int: 0 if check unsuccessfull and 1 if check successfull
+ */
+int checkPredicate(char identifier[]) {
+	
+	tableEntry temp = search_for(identifier);
+	if (temp->typ == Predicate)
+		return 1;
+	else
+		return 0;
+}
 
+/**
+* @brief Function to check, if Symboltable-Entry is of type Variable
+ * 
+ * @param identifier 
+ * @return int: 0 if check unsuccessfull and 1 if check successfull
+ */
+int checkVariable(char identifier[]) {
 
+	tableEntry temp = search_for(identifier);
+	if (temp->typ == Variable)
+		return 1;
+	else
+		return 0;
+}
+/**
+ * @brief Function to check, if Symboltable-Entry is of type Function
+ * 
+ * @param identifier 
+ * @return int: 0 if check unsuccessfull and 1 if check successfull
+ */
+int checkFunction(char identifier[]) {
+
+	tableEntry temp = search_for(identifier);
+	if (temp->typ == Function)
+		return 1;
+	else
+		return 0;
+}
 
 /**
  * @brief funciton to delete an entry

@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symTab.h"
-#include "error.h"
 #include "synTree.h"
+#include "error.h"
 int yylex(void);
 void initialize();
 %}
@@ -12,6 +12,7 @@ void initialize();
     char val [101];
 	int number;
     int regno;
+   struct node *node;
 }
 %left   EQUIVALENT
 %left   IMPLICATION
@@ -31,7 +32,9 @@ void initialize();
 
 file:    
         | declarations file {}
-        | formula SEMICOLON file {}
+        | formula SEMICOLON file {
+            printTree($<node>1,0);
+        }
         ;
 
 declarations:     DECLARE PREDICATE ID DD DIGIT { 
@@ -57,30 +60,116 @@ declarations:     DECLARE PREDICATE ID DD DIGIT {
 
 formula:      ID R_B_O term R_B_C { 
                     printf("PAR: %s\n", $<val>1); 
-                     //check auf Predicate -> symboltable
-                    }
+                    if((checkPredicate($<val>1))==1){
+						tableEntry t = search_for($<val>1);
+						$<node>$ = makePredicateNode(t,$<node>3);
+                    }else {
+                        printf("Syntax Error (Isn't predicate)");
+                        exit(1);
+			        }
+				}
             | TRUE { 
 				printf("PAR: True\n"); 
-				//makeTrueNode()}
-            | FALSE { printf("PAR: False\n"); }
-            | R_B_O formula R_B_C { printf("PAR: ( )\n"); }
-            | NOT formula { printf("PAR: ~\n"); }
-            | formula AND formula { printf("PAR: AND\n"); }
+				$<node>$=makeTrueNode();
+            }
+            | FALSE { 
+                printf("PAR: False\n"); 
+                $<node>$=makeFalseNode();
+            }
+            | R_B_O formula R_B_C { 
+                printf("PAR: ( )\n"); 
+                $<node>$ = $<node>2;
+            }
+            | NOT formula { 
+                printf("PAR: ~\n"); 
+                $<node>$ = makeNegationNode($<node>2);
+            }
+            | formula AND formula { 
+                printf("PAR: AND\n"); 
+                $<node>$ = makeConjunctionNode($<node>1,$<node>3);
+            }
             | formula OR formula { 
 				printf("PAR: OR\n"); 
-				// make disjunktionnodde()
-				}
-            | formula EQUIVALENT formula { printf("PAR: EQUIVALENT\n"); }
-            | formula IMPLICATION formula { printf("PAR: IMPLICATION\n"); }
-            | ALL B_O ID B_C formula { printf("PAR: ALL[%s]\n", $<val>3); }
-            | EXIST B_O ID B_C formula { printf("PAR: EXIST[%s]\n", $<val>3); }
+                $<node>$ = makeDisjunctionNode($<node>1,$<node>3);
+			}
+            | formula EQUIVALENT formula { 
+                printf("PAR: EQUIVALENT\n"); 
+                $<node>$ = makeEquivalenceNode($<node>1,$<node>3);
+            }
+            | formula IMPLICATION formula { 
+                printf("PAR: IMPLICATION\n"); 
+                $<node>$ = makeImplicationNode($<node>1,$<node>3);
+            }
+            | ALL B_O ID B_C formula { 
+                printf("PAR: ALL[%s]\n", $<val>3); 
+                if((checkVariable($<val>3))==1){
+                    tableEntry e = search_for($<val>3);
+                    struct node* var = makeVariableNode(e);
+                    $<node>$ = makeAllNode(var , $<node>5);
+                }
+            }
+            | EXIST B_O ID B_C formula { 
+            printf("PAR: EXIST[%s]\n", $<val>3); 
+            if((checkVariable($<val>3))==1){
+				tableEntry e = search_for($<val>3);
+				struct node* var = makeVariableNode(e);
+                $<node>$ = makeExistNode(var,$<node>5);
+                }
+            }
             ;
 
-term:     {printf("PAR: kein Argument\n");}
-        | ID      {strcpy($<val>$,$<val>1); printf("PAR: %s\n", $<val>1);}
-        | DIGIT   {strcpy($<val>$,$<val>1); printf("PAR: %s\n", $<val>1);}
-        | ID R_B_O term R_B_C { printf("PAR: %s( )\n", $<val>1); }
-        | term COMMA term { printf("PAR: ,\n"); }
+term:     {
+			printf("PAR: kein Argument\n");
+			$<node>$=NULL;
+		}
+        | ID      {
+			strcpy($<val>$,$<val>1); 
+			printf("PAR: %s\n", $<val>1);
+			if((checkFunction($<val>1))==1){
+				tableEntry e = search_for($<val>1);
+				if(e->arity != 0){
+                    printf("Syntax Error (isn't arity=0)");
+                    exit(1);
+				}
+				else{
+                    $<node>$ = makeFunctionNode(e, NULL);
+					$<node>$ = makeArgumentNode($<node>$);
+
+				}
+            }
+			else if((checkVariable($<val>1))==1){
+				tableEntry e = search_for($<val>1);
+                $<node>$ = makeVariableNode(e);
+				$<node>$ = makeArgumentNode($<node>$);
+            }
+			else {
+				printf("Syntax Error (isn't Variable or Function)");
+                exit(1);
+			}
+			
+        }
+        | DIGIT   {
+            strcpy($<val>$,$<val>1); 
+            printf("PAR: %s\n", $<val>1);
+            struct node* num = makeNumberNode($<number>1);
+			$<node>$ = makeArgumentNode(num);
+        }
+        | ID R_B_O term R_B_C { 
+            printf("PAR: %s( )\n", $<val>1); 
+			if((checkFunction($<val>1))==1){
+				tableEntry e = search_for($<val>1);
+                struct node* num = makeFunctionNode(e, $<node>3);
+                $<node>$ = makeArgumentNode(num);
+            }
+			else{
+				printf("Syntax Error (isn't Function)");
+                exit(1);
+			}
+        }
+        | term COMMA term { 
+			printf("PAR: ,\n"); 
+			$<node>$ = appendArgumentNode($<node>1,$<node>3);
+		}
         ;
 
 %%
