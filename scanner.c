@@ -967,7 +967,7 @@ YY_RULE_SETUP
 #line 103 "scanner.l"
 {
   printf("LEX: Digit: %s\n", yytext );
-  strcpy(yylval.val,yytext);
+  yylval.number = atoi( yytext );
   return DIGIT;
 }
 	YY_BREAK

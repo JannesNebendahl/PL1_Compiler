@@ -85,12 +85,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 10 "parser.y"
+#line 11 "parser.y"
 
     char val [101];
+	int number;
     int regno;
+   struct node *node;
 
-#line 94 "parser.h"
+#line 96 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

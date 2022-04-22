@@ -107,13 +107,19 @@ formula:      ID R_B_O term R_B_C {
                     struct node* var = makeVariableNode(e);
                     $<node>$ = makeAllNode(var , $<node>5);
                 }
+                else{
+                    printf("Ist't Variable");
+                }
             }
             | EXIST B_O ID B_C formula { 
             printf("PAR: EXIST[%s]\n", $<val>3); 
             if((checkVariable($<val>3))==1){
 				tableEntry e = search_for($<val>3);
 				struct node* var = makeVariableNode(e);
-                $<node>$ = makeExistNode(var,$<node>5);
+                $<node>$ = makeExistNode(var, $<node>5);
+                } 
+                else{
+                    printf("Ist't Variable");
                 }
             }
             ;
@@ -132,15 +138,15 @@ term:     {
                     exit(1);
 				}
 				else{
-                    $<node>$ = makeFunctionNode(e, NULL);
-					$<node>$ = makeArgumentNode($<node>$);
+                    struct node* node = makeFunctionNode(e, NULL);
+					$<node>$ = makeArgumentNode(node);
 
 				}
             }
 			else if((checkVariable($<val>1))==1){
 				tableEntry e = search_for($<val>1);
-                $<node>$ = makeVariableNode(e);
-				$<node>$ = makeArgumentNode($<node>$);
+                struct node* node = makeVariableNode(e);
+				$<node>$ = makeArgumentNode(node);
             }
 			else {
 				printf("Syntax Error (isn't Variable or Function)");
