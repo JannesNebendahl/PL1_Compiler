@@ -162,10 +162,13 @@ void printTree(struct node *node, int level)
 {
 	if (node != NULL)
 	{
-		printf("STP: ");
-		for (int i = 0; i <= level; i++)
+		if (node->nodeType != argument_t)
 		{
-			printf(".");
+			printf("STP: ");
+			for (int i = 0; i <= level; i++)
+			{
+				printf(".");
+			}
 		}
 		switch (node->nodeType)
 		{
@@ -205,11 +208,11 @@ void printTree(struct node *node, int level)
 			break;
 		case predicate:
 			printf("PREDICATE: %s\n", node->predicate_struct.tableEntry->identifier);
-			printTree(node->predicate_struct.argument, level +1);
+			printTree(node->predicate_struct.argument, level + 1);
 			break;
 		case function:
 			printf("FUNCTION: %s\n", node->function_struct.tableEntry->identifier);
-			printTree(node->function_struct.argument, level +1);
+			printTree(node->function_struct.argument, level + 1);
 			break;
 		case variable:
 			printf("VARIABLE: %s\n", node->variable_struct.tableEntry->identifier);
