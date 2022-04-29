@@ -2,7 +2,7 @@
 #define SYNTREE_H
 #include "symTab.h"
 
-enum nodeT{all, exist, and, or, implication, equivalence, negation, predicate, function, variable,true_node, false_node, number, argument_t};
+enum nodeT{all, exist, and, or, implication, equivalence, negation, predicate, function, variable,true_node, false_node, number_t, argument_t};
 struct node
 {
     enum nodeT nodeType; //Knotentyp zuordnen
@@ -77,6 +77,8 @@ struct node* makeArgumentNode(struct node* arg);
 struct node* appendArgumentNode( struct node* argument_left ,struct node* argument_new);
 
 struct node* makeNumberNode(int number);
+
+void writeOutputFormula(struct node* node, FILE *f);
 
 void printTree(struct node* node, int level);
 

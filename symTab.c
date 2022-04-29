@@ -28,6 +28,7 @@ tableEntry insert_right(char identifier[], typ typ, int arity, var_type type)
 	strcpy(new_tableEntry->identifier, identifier);
 	new_tableEntry->typ = typ;
 	new_tableEntry->arity = arity;
+	new_tableEntry->var_type = type;
 	new_tableEntry->next = NULL;
 
 	// Initializing actSymTable with the first entry
@@ -152,6 +153,7 @@ void printList()
 {
 	printf("\n------Actual symboltable-------:\n");
 	char const *typen[] = {"Predicate", "Function", "Variable"};
+	char const *var_types[] = {"int", "NoType"};
 	int index = 1;
 	tableEntry temp = actSymTable;
 	while (temp != NULL)
@@ -160,11 +162,42 @@ void printList()
 		printf("ID: %s \n", temp->identifier);
 		printf("Typ: %s \n", typen[temp->typ]);
 		printf("Arity: %d \n", temp->arity);
+		printf("Arity Typ: %s \n",var_types[temp->var_type]);
 		index++;
 		temp = temp->next;
 	}
 	temp = NULL;
 	printf("\n-----------------------------\n", index);
+}
+	
+/**
+ * @brief Function to print the Declare 
+ *
+ */
+void writeOutputDeclare(FILE *f)
+{
+	
+	char const *typen[] = {"PREDICATE", "FUNCTION", "VARIABLE"};
+	char const *var_types[] = {"int", "NoType"};
+
+	tableEntry temp = actSymTable;
+	while (temp != NULL)
+	{
+		fprintf(f, "DECLARE ");
+		fprintf(f, "%s ", typen[temp->typ]);
+		fprintf(f, "%s ", temp->identifier);
+		fprintf(f, ": ");
+		if(temp->var_type != NoType){
+			fprintf(f, "%s\n",var_types[temp->var_type]);
+		}
+		else{
+			fprintf(f, "%d \n", temp->arity);
+		}
+		
+		
+		temp = temp->next;
+	}
+	temp = NULL;
 }
 	
 

@@ -16,7 +16,10 @@ struct tableEntry_struct{
 	var_type var_type;
 	struct tableEntry_struct *next; // Zeiger auf nächstes Element
 };
+
+
 typedef struct tableEntry_struct* tableEntry;
+
 tableEntry insert_right(char identifier[], typ typ, int arity, var_type type);
 int checkPredicate(char identifier[]);
 int checkVariable(char identifier[]);
@@ -26,6 +29,8 @@ void delete_right();
 void delete(char* identifier);
 
 void printList();
+
+void writeOutputDeclare(FILE *f);
 
 tableEntry search_for( char* identifier);
 

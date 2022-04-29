@@ -6,7 +6,7 @@
 
 struct node *makeAllNode(struct node *var, struct node *formula_node)
 {
-	struct node *new_node = malloc(sizeof(struct node));
+	struct node* new_node = malloc(sizeof(struct node));
 	new_node->nodeType = all;
 	new_node->quantor_struct.formula = formula_node;
 	new_node->quantor_struct.var = var;
@@ -15,7 +15,7 @@ struct node *makeAllNode(struct node *var, struct node *formula_node)
 
 struct node *makeExistNode(struct node *var, struct node *formula_node)
 {
-	struct node *new_node = malloc(sizeof(struct node));
+	struct node* new_node = malloc(sizeof(struct node));
 	new_node->nodeType = exist;
 	new_node->quantor_struct.formula = formula_node;
 	new_node->quantor_struct.var = var;
@@ -44,7 +44,7 @@ struct node *makeConjunctionNode(struct node *formula_left_node, struct node *fo
  * @param formula_right_node
  * @return struct node*
  */
-struct node *makeDisjunctionNode(struct node *formula_left_node, struct node *formula_right_node)
+struct node *makeDisjunctionNode(struct node* formula_left_node, struct node *formula_right_node)
 {
 	struct node *new_node = malloc(sizeof(struct node));
 	new_node->nodeType = or ;
@@ -91,8 +91,8 @@ struct node *makePredicateNode(tableEntry SymTabEntry, struct node *argumentList
 {
 	struct node *new_node = malloc(sizeof(struct node));
 	new_node->nodeType = predicate;
-	new_node->function_struct.tableEntry = SymTabEntry;
-	new_node->function_struct.argument = argumentList;
+	new_node->predicate_struct.tableEntry = SymTabEntry;
+	new_node->predicate_struct.argument = argumentList;
 	return new_node;
 }
 /**
@@ -103,6 +103,7 @@ struct node *makePredicateNode(tableEntry SymTabEntry, struct node *argumentList
  */
 struct node *makeVariableNode(tableEntry SymTabEntry)
 {
+
 	struct node *new_node = malloc(sizeof(struct node));
 	new_node->nodeType = variable;
 	new_node->variable_struct.tableEntry = SymTabEntry;
@@ -145,27 +146,120 @@ struct node *appendArgumentNode(struct node *argument_left, struct node *argumen
 		temp = temp->argument_struct.next;
 	}
 	temp->argument_struct.next = argument_new;
+	argument_new->argument_struct.next = NULL;
 	return argument_left;
 }
 
 struct node *makeNumberNode(int number)
 {
 	struct node *new_node = malloc(sizeof(struct node));
-	new_node->nodeType = number;
+	new_node->nodeType = number_t;
 	new_node->number = number;
 	return new_node;
 }
 
-// enum nodeT{all, exist, and, or, implication, equivalence, negation, predicate, function, variable,true_node, false_node, number, argument_t};
 
-void printTree(struct node *node, int level)
+/**
+ * @brief Function to print the Syntax of the SyntaxTree as Output file
+ * 
+ * @param node 
+ * @param f 
+ */
+void writeOutputFormula(struct node* node, FILE *f){
+
+	if (node != NULL)
+	{
+		switch (node->nodeType)
+		{
+		case all:
+			fprintf(f, "All[");
+			writeOutputFormula(node->quantor_struct.var, f);
+			fprintf(f, "]");
+			writeOutputFormula(node->quantor_struct.formula, f);
+			break;
+		case exist:
+			fprintf(f, "EXIST[");
+			writeOutputFormula(node->quantor_struct.var, f);
+			fprintf(f, "]");
+			writeOutputFormula(node->quantor_struct.formula, f);
+			break;
+		case and:
+			writeOutputFormula(node->binary_struct.formula_left, f);
+			fprintf(f, " & ");
+			writeOutputFormula(node->binary_struct.formula_right, f);
+			break;
+		case or:
+			
+			writeOutputFormula(node->binary_struct.formula_left, f);
+			fprintf(f, " | ");
+			writeOutputFormula(node->binary_struct.formula_right, f);
+			break;
+		case implication:
+			
+			writeOutputFormula(node->binary_struct.formula_left, f);
+			fprintf(f, " -> ");
+			writeOutputFormula(node->binary_struct.formula_right, f);
+			break;
+		case equivalence:
+			writeOutputFormula(node->binary_struct.formula_left, f);
+			fprintf(f, " <-> ");
+			writeOutputFormula(node->binary_struct.formula_right, f);
+			break;
+		case negation:
+			fprintf(f, "~(");
+			writeOutputFormula(node->unary_junctor.formula, f);
+			fprintf(f, ")");
+			break;
+		case predicate:
+			fprintf(f,"%s(", node->predicate_struct.tableEntry->identifier);
+			writeOutputFormula(node->predicate_struct.argument, f);
+			fprintf(f, ")");
+			break;
+		case function:
+			fprintf(f, "%s(", node->function_struct.tableEntry->identifier);
+			writeOutputFormula(node->function_struct.argument, f);
+			fprintf(f, ")");
+			break;
+		case variable:
+			fprintf(f, "%s", node->variable_struct.tableEntry->identifier);
+			break;
+		case true_node:
+			fprintf(f, "TRUE");
+			break;
+		case false_node:
+			fprintf(f, "FALSE");
+			break;
+		case number_t:
+			fprintf(f, "%d", node->number);
+			break;
+		case argument_t:
+			writeOutputFormula(node->argument_struct.argument, f);
+			if (node->argument_struct.next != NULL){ 
+			fprintf(f, ",");
+			writeOutputFormula(node->argument_struct.next, f);
+			}
+			break;
+		default:
+			fprintf(f,"ERROR");
+			exit(1);
+		}
+	}
+}
+// enum nodeT{all, exist, and, or, implication, equivalence, negation, predicate, function, variable,true_node, false_node, number, argument_t};
+/**
+ * @brief Function to print the Syntax Tree
+ * 
+ * @param node 
+ * @param level 
+ */
+void printTree(struct node* node, int level)
 {
 	if (node != NULL)
 	{
 		if (node->nodeType != argument_t)
 		{
 			printf("STP: ");
-			for (int i = 0; i <= level; i++)
+			for (int i = 0; i < level; i++)
 			{
 				printf(".");
 			}
@@ -223,12 +317,14 @@ void printTree(struct node *node, int level)
 		case false_node:
 			printf("FALSE\n");
 			break;
-		case number:
+		case number_t:
 			printf("NUMBER %d\n", node->number);
 			break;
 		case argument_t:
 			printTree(node->argument_struct.argument, level);
+			if (node->argument_struct.next != NULL){ //try
 			printTree(node->argument_struct.next, level);
+			}
 			break;
 		default:
 			printf("unknown syntax Node\n");

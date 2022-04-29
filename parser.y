@@ -12,7 +12,7 @@ void initialize();
     char val [101];
 	int number;
     int regno;
-   struct node *node;
+   struct node* node;
 }
 %left   EQUIVALENT
 %left   IMPLICATION
@@ -31,9 +31,20 @@ void initialize();
 %%
 
 file:    
-        | declarations file {}
+        | declarations file {
+
+        }
         | formula SEMICOLON file {
-            printTree($<node>1,0);
+        	printTree($<node>1,0);
+            FILE *f = fopen("output.pl1", "w");
+            if(f == NULL){
+                printf("Error opening file!\n");
+                exit(1);
+            }
+            writeOutputDeclare(f);
+            fprintf(f, "\n");
+            writeOutputFormula($<node>1,f);
+            fprintf(f, ";\n");
         }
         ;
 
@@ -113,11 +124,12 @@ formula:      ID R_B_O term R_B_C {
             }
             | EXIST B_O ID B_C formula { 
             printf("PAR: EXIST[%s]\n", $<val>3); 
-            if((checkVariable($<val>3))==1){
-				tableEntry e = search_for($<val>3);
-				struct node* var = makeVariableNode(e);
-                $<node>$ = makeExistNode(var, $<node>5);
-                } 
+            if((checkVariable($<val>3))==1){	
+ 					tableEntry e = search_for($<val>3);
+                    struct node* var = makeVariableNode(e);
+					printf("test: %s\n",var->variable_struct.tableEntry->identifier);
+                    $<node>$ = makeExistNode(var , $<node>5);                
+					}
                 else{
                     printf("Ist't Variable");
                 }
@@ -140,7 +152,6 @@ term:     {
 				else{
                     struct node* node = makeFunctionNode(e, NULL);
 					$<node>$ = makeArgumentNode(node);
-
 				}
             }
 			else if((checkVariable($<val>1))==1){
@@ -156,7 +167,7 @@ term:     {
         }
         | DIGIT   {
             strcpy($<val>$,$<val>1); 
-            printf("PAR: %s\n", $<val>1);
+            printf("PAR: %d\n", $<number>1);
             struct node* num = makeNumberNode($<number>1);
 			$<node>$ = makeArgumentNode(num);
         }
