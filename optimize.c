@@ -59,6 +59,9 @@ struct node* verschiebeNegation(struct node* node){
                     newLeft = makeNegationNode(node->unary_junctor.formula->binary_struct.formula_left);
                     newRight = makeNegationNode(node->unary_junctor.formula->binary_struct.formula_right);
                     rueck = makeDisjunctionNode(newLeft, newRight);
+                    printf("\nPrint Teiltree:\n");
+                    printTree(rueck,0);	
+                    printf("\n");
                     free(node->unary_junctor.formula);
                     free(node);
                     break;
@@ -118,15 +121,23 @@ struct node* makeFormulaEasier(struct node* node){
 	switch (node->nodeType){
 		case and:
 		case or:
+            struct node* left = makeFormulaEasier(node->binary_struct.formula_left);
+			struct node* right = makeFormulaEasier(node->binary_struct.formula_right);
+			node->binary_struct.formula_left = left;
+            node->binary_struct.formula_right = right;
+            rueck = node;
+			break;
 	    case negation:
+            rueck = makeFormulaEasier(node->unary_junctor.formula);
+            break;
         case all:
 		case exist:
 			rueck = makeFormulaEasier(node->quantor_struct.formula);
             node->quantor_struct.formula = rueck;
             rueck = node;
 			break;
-		case implication:
-            printf("OPT: Make Implication easier\n");
+		case equivalence:
+            printf("OPT: Make Equivalence easier\n");
             left = makeConjunctionNode(node->binary_struct.formula_left, node->binary_struct.formula_right);
             struct node* rightNegLeft = makeNegationNode(node->binary_struct.formula_left);
             struct node* rightNegRight = makeNegationNode(node->binary_struct.formula_right);
@@ -134,10 +145,10 @@ struct node* makeFormulaEasier(struct node* node){
             rueck = makeDisjunctionNode(left, right);
             free(node);
             break;
-		case equivalence:
-            printf("OPT: Make Equivalence easier\n");
+		case implication:
+            printf("OPT: Make Implication easier\n");
             left = makeNegationNode(node->binary_struct.formula_left);
-            right = node->binary_struct.formula_left;
+            right = node->binary_struct.formula_right;
             rueck = makeDisjunctionNode(left, right);
             free(node);
 			break;
@@ -153,11 +164,13 @@ struct node* makeBoolOperations(struct node* node){
 		case and:
             if(node->binary_struct.formula_left->nodeType == true_node){
                 printf("OPT: Refactor unnecessary Conjunction with left Formula\n");
-                rueck = node->binary_struct.formula_left;
+                rueck = makeBoolOperations(node->binary_struct.formula_left);
+                free(node);
             }
             else if(node->binary_struct.formula_right->nodeType == true_node){
                 printf("OPT: Refactor unnecessary Conjunction with right Formula\n");
-                rueck = node->binary_struct.formula_right;
+                rueck = makeBoolOperations(node->binary_struct.formula_right);
+                free(node);
             }
             else if(node->binary_struct.formula_left->nodeType == false_node || node->binary_struct.formula_right->nodeType == false_node){
                 printf("OPT: Refactor unnecessary Conjunction with False\n");
@@ -165,8 +178,11 @@ struct node* makeBoolOperations(struct node* node){
                 free(node);
             }
             else{
+                node->binary_struct.formula_left = makeBoolOperations(node->binary_struct.formula_left);
+                node->binary_struct.formula_right = makeBoolOperations(node->binary_struct.formula_right);
                 rueck = node;
             }
+            break;
 		case or:
             if(node->binary_struct.formula_left->nodeType == true_node || node->binary_struct.formula_right->nodeType == true_node){
                 printf("OPT: Refactor unnecessary Disjunction with True\n");
@@ -175,32 +191,38 @@ struct node* makeBoolOperations(struct node* node){
             }
             else if(node->binary_struct.formula_left->nodeType == false_node){
                 printf("OPT: Refactor unnecessary Disjunction with left Formula\n");
-                rueck = node->binary_struct.formula_left;
+                rueck = makeBoolOperations(node->binary_struct.formula_left);
+                free(node);
             }
             else if(node->binary_struct.formula_right->nodeType == false_node){
                 printf("OPT: Refactor unnecessary Disjunction with right Formula\n");
-                rueck = node->binary_struct.formula_right;
+                rueck = makeBoolOperations(node->binary_struct.formula_right);
+                free(node);
             }
             else{
+                node->binary_struct.formula_left = makeBoolOperations(node->binary_struct.formula_left);
+                node->binary_struct.formula_left = makeBoolOperations(node->binary_struct.formula_right);
                 rueck = node;
             }
+            break;
 	    case negation:
-            if(node->unary_junctor.formula == true_node){
+            if(node->unary_junctor.formula->nodeType == true_node){
                 printf("OPT: Refactor Negation True with False\n");
                 rueck = makeFalseNode();
                 free(node);
-            }else if(node->unary_junctor.formula == false_node){
+            }else if(node->unary_junctor.formula->nodeType == false_node){
                 printf("OPT: Refactor Negation False with True\n");
                 rueck = makeTrueNode();
                 free(node);
             }else{
-                rueck = node;
+                rueck = makeBoolOperations(node->unary_junctor.formula);
             }
+            break;
         case equivalence:
 		case implication:
         case all:
 		case exist:
-			rueck = makeFormulaEasier(node->quantor_struct.formula);
+			rueck = makeBoolOperations(node->quantor_struct.formula);
             node->quantor_struct.formula = rueck;
             rueck = node;
 			break;
@@ -212,12 +234,12 @@ struct node* makeBoolOperations(struct node* node){
 
 struct node* optimzeFormula(struct node* node)
 {
-    node = makeBoolOperations(node);
-    node = makeFormulaEasier(node);
+    //node = makeBoolOperations(node);
+    node = makeFormulaEasier(node); //fix error when running andequiv_in
+    printTree(node,0);
 	node = verschiebeNegation(node);
-		printTree(node, 0);
+    printTree(node,0);
     node = entfDoppNegation(node);
-		printTree(node, 0);
 
     return node;
 }	

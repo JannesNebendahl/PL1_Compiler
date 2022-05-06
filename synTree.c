@@ -189,14 +189,11 @@ void writeOutputFormula(struct node* node, FILE *f){
 			writeOutputFormula(node->binary_struct.formula_right, f);
 			break;
 		case or:
-			printf("case or: %d\n", node->binary_struct.formula_left->nodeType);
-
 			writeOutputFormula(node->binary_struct.formula_left, f);
 			fprintf(f, " | ");
 			writeOutputFormula(node->binary_struct.formula_right, f);
 			break;
 		case implication:
-			
 			writeOutputFormula(node->binary_struct.formula_left, f);
 			fprintf(f, " -> ");
 			writeOutputFormula(node->binary_struct.formula_right, f);
@@ -213,7 +210,6 @@ void writeOutputFormula(struct node* node, FILE *f){
 			break;
 		case predicate:
 			fprintf(f,"%s(", node->predicate_struct.tableEntry->identifier);
-			printf("case predicate: %d\n", node->predicate_struct.argument);
 			writeOutputFormula(node->predicate_struct.argument, f);
 			fprintf(f, ")");
 			break;
@@ -242,7 +238,7 @@ void writeOutputFormula(struct node* node, FILE *f){
 			}
 			break;
 		default:
-			printf("ERROR: %d", node->nodeType);
+			printf("OUT: ERROR (current nodeType = %d)", node->nodeType);
 			fprintf(f,"ERROR: %d", node->nodeType);
 			exit(1);
 		}
