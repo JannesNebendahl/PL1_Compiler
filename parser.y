@@ -4,6 +4,7 @@
 #include <string.h>
 #include "symTab.h"
 #include "synTree.h"
+#include "optimize.h"
 #include "error.h"
 int yylex(void);
 void initialize();
@@ -41,6 +42,7 @@ file:
                 printf("Error opening file!\n");
                 exit(1);
             }
+            $<node>1 = optimzeFormula($<node>1);
             writeOutputDeclare(f);
             fprintf(f, "\n");
             writeOutputFormula($<node>1,f);
@@ -91,7 +93,7 @@ formula:      ID R_B_O term R_B_C {
                 printf("PAR: ( )\n"); 
                 $<node>$ = $<node>2;
             }
-            | NOT formula { 
+		    | NOT formula { 
                 printf("PAR: ~\n"); 
                 $<node>$ = makeNegationNode($<node>2);
             }

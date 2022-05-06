@@ -74,11 +74,12 @@
 #include <string.h>
 #include "symTab.h"
 #include "synTree.h"
+#include "optimize.h"
 #include "error.h"
 int yylex(void);
 void initialize();
 
-#line 82 "parser.c"
+#line 83 "parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -525,9 +526,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    33,    33,    34,    35,    40,    47,    54,    61,    71,
-      75,    79,    83,    87,    91,    95,    99,   103,   114,   127,
-     131,   157,   163,   175
+       0,    34,    34,    35,    38,    53,    60,    67,    74,    84,
+      88,    92,    96,   100,   104,   108,   112,   116,   127,   141,
+     145,   170,   176,   188
 };
 #endif
 
@@ -1120,21 +1121,33 @@ yyreduce:
   switch (yyn)
     {
   case 3: /* file: declarations file  */
-#line 34 "parser.y"
-                            {}
-#line 1126 "parser.c"
+#line 35 "parser.y"
+                            {
+
+        }
+#line 1129 "parser.c"
     break;
 
   case 4: /* file: formula SEMICOLON file  */
-#line 35 "parser.y"
+#line 38 "parser.y"
                                  {
-            printTree((yyvsp[-2].node),0);
+        	printTree((yyvsp[-2].node),0);
+            FILE *f = fopen("output.pl1", "w");
+            if(f == NULL){
+                printf("Error opening file!\n");
+                exit(1);
+            }
+            (yyvsp[-2].node) = optimzeFormula((yyvsp[-2].node));
+            writeOutputDeclare(f);
+            fprintf(f, "\n");
+            writeOutputFormula((yyvsp[-2].node),f);
+            fprintf(f, ";\n");
         }
-#line 1134 "parser.c"
+#line 1147 "parser.c"
     break;
 
   case 5: /* declarations: DECLARE PREDICATE ID DD DIGIT  */
-#line 40 "parser.y"
+#line 53 "parser.y"
                                                 { 
                     printf("PAR: Declare Predicate %s with %d\n", (yyvsp[-2].val), (yyvsp[0].number));
                     char* val1 = (yyvsp[-2].val);
@@ -1142,32 +1155,32 @@ yyreduce:
 					insert_right(val1,Predicate,val2,NoType); 
 					 printList();
                   }
-#line 1146 "parser.c"
+#line 1159 "parser.c"
     break;
 
   case 6: /* declarations: DECLARE FUNCTION ID DD DIGIT  */
-#line 47 "parser.y"
+#line 60 "parser.y"
                                                { 
                     printf("PAR: Declare Function %s with %d\n", (yyvsp[-2].val), (yyvsp[0].number));
 					 insert_right((yyvsp[-2].val),Function,(yyvsp[0].number),NoType);   
                     printList();
 
                   }
-#line 1157 "parser.c"
+#line 1170 "parser.c"
     break;
 
   case 7: /* declarations: DECLARE VARIABLE ID DD INT  */
-#line 54 "parser.y"
+#line 67 "parser.y"
                                              { 
                     printf("PAR: Declare Variable %s with int \n", (yyvsp[-2].val));
 					 insert_right((yyvsp[-2].val),Variable,0,Int); 
                     printList();
                   }
-#line 1167 "parser.c"
+#line 1180 "parser.c"
     break;
 
   case 8: /* formula: ID R_B_O term R_B_C  */
-#line 61 "parser.y"
+#line 74 "parser.y"
                                   { 
                     printf("PAR: %s\n", (yyvsp[-3].val)); 
                     if((checkPredicate((yyvsp[-3].val)))==1){
@@ -1178,83 +1191,83 @@ yyreduce:
                         exit(1);
 			        }
 				}
-#line 1182 "parser.c"
+#line 1195 "parser.c"
     break;
 
   case 9: /* formula: TRUE  */
-#line 71 "parser.y"
+#line 84 "parser.y"
                    { 
 				printf("PAR: True\n"); 
 				(yyval.node)=makeTrueNode();
             }
-#line 1191 "parser.c"
+#line 1204 "parser.c"
     break;
 
   case 10: /* formula: FALSE  */
-#line 75 "parser.y"
+#line 88 "parser.y"
                     { 
                 printf("PAR: False\n"); 
                 (yyval.node)=makeFalseNode();
             }
-#line 1200 "parser.c"
+#line 1213 "parser.c"
     break;
 
   case 11: /* formula: R_B_O formula R_B_C  */
-#line 79 "parser.y"
+#line 92 "parser.y"
                                   { 
                 printf("PAR: ( )\n"); 
                 (yyval.node) = (yyvsp[-1].node);
             }
-#line 1209 "parser.c"
+#line 1222 "parser.c"
     break;
 
   case 12: /* formula: NOT formula  */
-#line 83 "parser.y"
-                          { 
+#line 96 "parser.y"
+                                  { 
                 printf("PAR: ~\n"); 
                 (yyval.node) = makeNegationNode((yyvsp[0].node));
             }
-#line 1218 "parser.c"
+#line 1231 "parser.c"
     break;
 
   case 13: /* formula: formula AND formula  */
-#line 87 "parser.y"
+#line 100 "parser.y"
                                   { 
                 printf("PAR: AND\n"); 
                 (yyval.node) = makeConjunctionNode((yyvsp[-2].node),(yyvsp[0].node));
             }
-#line 1227 "parser.c"
+#line 1240 "parser.c"
     break;
 
   case 14: /* formula: formula OR formula  */
-#line 91 "parser.y"
+#line 104 "parser.y"
                                  { 
 				printf("PAR: OR\n"); 
                 (yyval.node) = makeDisjunctionNode((yyvsp[-2].node),(yyvsp[0].node));
 			}
-#line 1236 "parser.c"
+#line 1249 "parser.c"
     break;
 
   case 15: /* formula: formula EQUIVALENT formula  */
-#line 95 "parser.y"
+#line 108 "parser.y"
                                          { 
                 printf("PAR: EQUIVALENT\n"); 
                 (yyval.node) = makeEquivalenceNode((yyvsp[-2].node),(yyvsp[0].node));
             }
-#line 1245 "parser.c"
+#line 1258 "parser.c"
     break;
 
   case 16: /* formula: formula IMPLICATION formula  */
-#line 99 "parser.y"
+#line 112 "parser.y"
                                           { 
                 printf("PAR: IMPLICATION\n"); 
                 (yyval.node) = makeImplicationNode((yyvsp[-2].node),(yyvsp[0].node));
             }
-#line 1254 "parser.c"
+#line 1267 "parser.c"
     break;
 
   case 17: /* formula: ALL B_O ID B_C formula  */
-#line 103 "parser.y"
+#line 116 "parser.y"
                                      { 
                 printf("PAR: ALL[%s]\n", (yyvsp[-2].val)); 
                 if((checkVariable((yyvsp[-2].val)))==1){
@@ -1266,36 +1279,37 @@ yyreduce:
                     printf("Ist't Variable");
                 }
             }
-#line 1270 "parser.c"
+#line 1283 "parser.c"
     break;
 
   case 18: /* formula: EXIST B_O ID B_C formula  */
-#line 114 "parser.y"
+#line 127 "parser.y"
                                        { 
             printf("PAR: EXIST[%s]\n", (yyvsp[-2].val)); 
-            if((checkVariable((yyvsp[-2].val)))==1){
-				tableEntry e = search_for((yyvsp[-2].val));
-				struct node* var = makeVariableNode(e);
-                (yyval.node) = makeExistNode(var, (yyvsp[0].node));
-                } 
+            if((checkVariable((yyvsp[-2].val)))==1){	
+ 					tableEntry e = search_for((yyvsp[-2].val));
+                    struct node* var = makeVariableNode(e);
+					printf("test: %s\n",var->variable_struct.tableEntry->identifier);
+                    (yyval.node) = makeExistNode(var , (yyvsp[0].node));                
+					}
                 else{
                     printf("Ist't Variable");
                 }
             }
-#line 1286 "parser.c"
+#line 1300 "parser.c"
     break;
 
   case 19: /* term: %empty  */
-#line 127 "parser.y"
+#line 141 "parser.y"
           {
 			printf("PAR: kein Argument\n");
 			(yyval.node)=NULL;
 		}
-#line 1295 "parser.c"
+#line 1309 "parser.c"
     break;
 
   case 20: /* term: ID  */
-#line 131 "parser.y"
+#line 145 "parser.y"
                   {
 			strcpy((yyval.val),(yyvsp[0].val)); 
 			printf("PAR: %s\n", (yyvsp[0].val));
@@ -1308,7 +1322,6 @@ yyreduce:
 				else{
                     struct node* node = makeFunctionNode(e, NULL);
 					(yyval.node) = makeArgumentNode(node);
-
 				}
             }
 			else if((checkVariable((yyvsp[0].val)))==1){
@@ -1322,22 +1335,22 @@ yyreduce:
 			}
 			
         }
-#line 1326 "parser.c"
+#line 1339 "parser.c"
     break;
 
   case 21: /* term: DIGIT  */
-#line 157 "parser.y"
+#line 170 "parser.y"
                   {
             strcpy((yyval.val),(yyvsp[0].val)); 
-            printf("PAR: %s\n", (yyvsp[0].val));
+            printf("PAR: %d\n", (yyvsp[0].number));
             struct node* num = makeNumberNode((yyvsp[0].number));
 			(yyval.node) = makeArgumentNode(num);
         }
-#line 1337 "parser.c"
+#line 1350 "parser.c"
     break;
 
   case 22: /* term: ID R_B_O term R_B_C  */
-#line 163 "parser.y"
+#line 176 "parser.y"
                               { 
             printf("PAR: %s( )\n", (yyvsp[-3].val)); 
 			if((checkFunction((yyvsp[-3].val)))==1){
@@ -1350,20 +1363,20 @@ yyreduce:
                 exit(1);
 			}
         }
-#line 1354 "parser.c"
+#line 1367 "parser.c"
     break;
 
   case 23: /* term: term COMMA term  */
-#line 175 "parser.y"
+#line 188 "parser.y"
                           { 
 			printf("PAR: ,\n"); 
 			(yyval.node) = appendArgumentNode((yyvsp[-2].node),(yyvsp[0].node));
 		}
-#line 1363 "parser.c"
+#line 1376 "parser.c"
     break;
 
 
-#line 1367 "parser.c"
+#line 1380 "parser.c"
 
       default: break;
     }
@@ -1556,7 +1569,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 181 "parser.y"
+#line 194 "parser.y"
 
 
 

@@ -1,4 +1,4 @@
-objects = parser.o scanner.o symTab.o error.o synTree.o
+objects = parser.o scanner.o symTab.o error.o synTree.o optimize.o
 CC = gcc
 LEX = flex
 YACC = bison

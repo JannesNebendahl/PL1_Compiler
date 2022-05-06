@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"*.y": "yylex",
+		"stdlib.h": "c",
+		"stdio.h": "c"
+	}
+}
