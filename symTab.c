@@ -6,10 +6,7 @@
 int initialized;
 tableEntry actSymTable = NULL;
 
-void init()
-{
-	printf("\n------------initialize table ----------\n");
-}
+
 /**
  * @brief Function to insert a new entry into the list
  *
@@ -100,50 +97,6 @@ int checkFunction(char identifier[]) {
 		return 0;
 }
 
-/**
- * @brief funciton to delete an entry
- * NOT USED
- *
- */
-void delete_right()
-{
-	tableEntry temp = actSymTable;
-	tableEntry tmp = temp->next;
-	temp->next = temp->next->next;
-	free(tmp);
-}
-
-/**
- * @brief deleting an entry with help of an identifier
- * NOT USED
- */
-void delete (char *identifier)
-{
-	tableEntry begin = actSymTable;
-	tableEntry del = begin, previous;
-
-	// wenn der erste Eintrag der richtige ist
-	if (del != NULL && del->identifier == identifier)
-	{
-		begin = del->next;
-		free(del);
-		return;
-	}
-	// durchiterieren der Liste
-	while (del != NULL && del->identifier == identifier)
-	{
-		previous = del;
-		del = del->next;
-	}
-
-	// wenn kein Eintrag gefunden werden kann
-	if (del == NULL)
-		return;
-	// löschen des Eintrags
-	previous->next = del->next;
-	free(del);
-	begin =NULL;
-}
 
 /**
  * @brief Function to print the table
@@ -171,8 +124,9 @@ void printList()
 }
 	
 /**
- * @brief Function to print the Declare 
- *
+ * @brief Function to print the Declare to the output file 
+ * 
+ * @param f output file
  */
 void writeOutputDeclare(FILE *f)
 {
@@ -200,10 +154,12 @@ void writeOutputDeclare(FILE *f)
 	temp = NULL;
 }
 	
-
 /**
  * @brief  Funktion um einen Eintrag auf basis des Identifiers zu suchen
  * Zeiger geht die Liste durch, bis er den Eintrag findet oder auf NULL steht
+ * 
+ * @param identifier identifier, nachdem gesucht wird
+ * @return tableEntry gefundener Eintrag oder NULL, wenn Suche erfolglos
  */
 
 tableEntry search_for(char identifier[])

@@ -158,6 +158,118 @@ struct node *makeNumberNode(int number)
 	return new_node;
 }
 
+void freeTeilTree(struct node* node){
+	if (node != NULL)
+	{
+		switch (node->nodeType)
+		{
+			case all:
+			case exist:
+				freeTeilTree(node->quantor_struct.formula);
+				free(node);
+				break;
+			case and:
+			case or:
+			case implication:
+			case equivalence:
+				freeTeilTree(node->binary_struct.formula_left);
+				freeTeilTree(node->binary_struct.formula_right);
+				free(node);
+				break;
+			case negation:
+				freeTeilTree(node->unary_junctor.formula);
+				free(node);
+				break;
+			case predicate:
+				freeTeilTree(node->predicate_struct.argument);
+				free(node);
+				break;
+			case function:
+				freeTeilTree(node->function_struct.argument);
+				free(node);
+				break;
+			case variable:
+				free(node);
+				break;
+			case true_node:
+				free(node);
+				break;
+			case false_node:
+				free(node);
+				break;
+			case number_t:
+				free(node);
+				break;
+			case argument_t:
+				freeTeilTree(node->argument_struct.argument);
+				freeTeilTree(node->argument_struct.next);
+				free(node);
+				break;
+			default:
+				printf("OPT: ERROR couldn't free node (current nodeType = %d)", node->nodeType);
+				exit(1);
+		}
+	}
+}
+
+struct node *copyOfTeilTree(struct node* node){
+	struct node * copyNode = NULL;
+	
+	if (node != NULL)
+	{
+		switch (node->nodeType)
+		{
+			case all:
+				copyNode = makeAllNode(copyOfTeilTree(node->quantor_struct.var),copyOfTeilTree(node->quantor_struct.formula));
+				break;
+			case exist:
+				copyNode = makeExistNode(copyOfTeilTree(node->quantor_struct.var), copyOfTeilTree(node->quantor_struct.formula));
+				break;
+			case and:
+				copyNode = makeConjunctionNode(copyOfTeilTree(node->binary_struct.formula_left),copyOfTeilTree(node->binary_struct.formula_right));
+				break;
+			case or:
+				copyNode = makeDisjunctionNode(copyOfTeilTree(node->binary_struct.formula_left),copyOfTeilTree(node->binary_struct.formula_right));
+				break;
+			case implication:
+				copyNode = makeImplicationNode(copyOfTeilTree(node->binary_struct.formula_left),copyOfTeilTree(node->binary_struct.formula_right));
+				break;
+			case equivalence:
+				copyNode = makeEquivalenceNode(copyOfTeilTree(node->binary_struct.formula_left),copyOfTeilTree(node->binary_struct.formula_right));
+				break;
+			case negation:
+				copyNode = makeNegationNode(copyOfTeilTree(node->unary_junctor.formula));
+				break;
+			case predicate:
+				copyNode = makePredicateNode(node->predicate_struct.tableEntry,copyOfTeilTree(node->predicate_struct.argument));
+				break;
+			case function:
+				copyNode = makeFunctionNode(node->function_struct.tableEntry,copyOfTeilTree(node->function_struct.argument));
+				break;
+			case variable:
+				copyNode = makeVariableNode(node->function_struct.tableEntry);
+				break;
+			case true_node:
+				copyNode = makeTrueNode();
+				break;
+			case false_node:
+				copyNode = makeFalseNode();
+				break;
+			case number_t:
+				copyNode = makeNumberNode(node->number);
+				break;
+			case argument_t:
+				copyNode = makeArgumentNode(copyOfTeilTree(node->argument_struct.argument));
+				copyNode->argument_struct.next = copyOfTeilTree(node->argument_struct.next);
+				break;
+			default:
+				printf("OPT: ERROR couldn't copy node (current nodeType = %d)", node->nodeType);
+				exit(1);
+		}
+	}
+	return copyNode;
+}
+
 
 /**
  * @brief Function to print the Syntax of the SyntaxTree as Output file

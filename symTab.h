@@ -25,8 +25,6 @@ int checkPredicate(char identifier[]);
 int checkVariable(char identifier[]);
 int checkFunction(char identifier[]);
 
-void delete_right();
-void delete(char* identifier);
 
 void printList();
 

@@ -78,6 +78,10 @@ struct node* appendArgumentNode( struct node* argument_left ,struct node* argume
 
 struct node* makeNumberNode(int number);
 
+struct node* copyOfTeilTree(struct node* node);
+
+void  freeTeilTree(struct node* node);
+
 void writeOutputFormula(struct node* node, FILE *f);
 
 void printTree(struct node* node, int level);
